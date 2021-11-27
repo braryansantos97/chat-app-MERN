@@ -8,9 +8,10 @@ const userRoutes = require('./routes/userRoutes')
 dotenv.config();
 connectDB();
 
+app.use(express.json());
 
 app.get('/', (req,res) => {
-    res.send("Apii is running")
+    res.send("Api is running")
 })
 
 app.use('/api/user', userRoutes)

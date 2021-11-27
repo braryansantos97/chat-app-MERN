@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const generateToken = require('../config/generateToken');
 const User = require('../models/userModel')
 
 
@@ -35,9 +36,27 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User not created');
    }
 
-
-
-
 });
 
-module.exports = { registerUser }
+const authUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if(user && (await user.matcPassword(password))) {
+        res.json({
+            id_: user._id,
+            name: user.name,
+            email: user.email,
+            pic: user.pic,
+            token: generateToken(user._id),
+        })
+    } else {
+        res.status(401);
+        throw new Error("Invalid User or Password")
+    }
+
+ 
+ });
+
+module.exports = { registerUser, authUser }
